@@ -55,20 +55,18 @@ def coordinates(x):
 
 # Membaca elemen dari list of list of location, mengembalikan jarak dengan metode haversine #
 def jarak(longitudeA, latitudeA, longitudeB, latitudeB):
-    # convert decimal degrees to radians
     longitudeA, latitudeA, longitudeB, latitudeB = map(radians, [longitudeA, latitudeA, longitudeB, latitudeB])
-    # haversine formula 
     dlon = longitudeB - longitudeA
     dlat = latitudeB - latitudeA
     a = sin(dlat/2)**2 + cos(latitudeA) * cos(latitudeB) * sin(dlon/2)**2
     c = 2 * asin(sqrt(a)) 
     r = 6371 * (1000) 
-    dist = round(c*r, 2)
+    dist = round(c*r, 3)
     return dist
 
 # Membaca array pada bagian matrix ketetanggan, kemudian membuat matrix bobot yang berisikan jarak 
-# yang dihitung dengan metode haversine formula.
-def matrixJarakTetangga(arr, loc):
+# yang dihitung dengan metode haversine formula antar simpul.
+def matrixJarak(arr, loc):
     matrix = []
     starting = int(arr[0][0])
     for i in range(starting+1, len(arr)):
@@ -112,7 +110,7 @@ def sortingFn(fnCandidate):
     return fnCandidate
 
 # Mencari jalur terpendek dari node asal ke node tujuan #
-def closestPath(srcNode, destNode, arrNeigh, tetanggaDist, listNode):
+def closestPath(srcNode, destNode, arrNeigh, Distance, listNode):
     candidate = []
     candidateNode = [srcNode]
     visited = []
@@ -132,8 +130,8 @@ def closestPath(srcNode, destNode, arrNeigh, tetanggaDist, listNode):
                     currentCheck = node
                     predIdx = getIdx(listNode,pred)
                     idx = getIdx(listNode, currentCheck)
-                    srcToN = predSrc + float(tetanggaDist[idx][predIdx])
-                    nToDest = float(tetanggaDist[idx][destIdx])
+                    srcToN = predSrc + float(Distance[idx][predIdx])
+                    nToDest = float(Distance[idx][destIdx])
                     temp = srcToN + nToDest
                     candidate.append((currentCheck, temp, srcToN, currentNode))
                     candidateNode.append(currentCheck)
