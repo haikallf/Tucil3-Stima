@@ -54,7 +54,7 @@ def coordinates(x):
     return loc
 
 # Membaca elemen dari list of list of location, mengembalikan jarak dengan metode haversine #
-def jarak(longitudeA, latitudeA, longitudeB, latitudeB):
+def jarak(latitudeA, longitudeA, latitudeB, longitudeB):
     longitudeA, latitudeA, longitudeB, latitudeB = map(radians, [longitudeA, latitudeA, longitudeB, latitudeB])
     dlon = longitudeB - longitudeA
     dlat = latitudeB - latitudeA
@@ -134,11 +134,10 @@ def closestPath(srcNode, destNode, arrNeigh, Distance, listNode):
                     nToDest = float(Distance[idx][destIdx])
                     temp = srcToN + nToDest
                     candidate.append((currentCheck, temp, srcToN, currentNode))
-                    candidateNode.append(currentCheck)
             candidate = sortingFn(candidate)
             #memastikan untuk tidak berenti iterasi ketika terdapat kasus dimana len(candidate) = 1 dan perlu dipop,
             #namun masih terdapat tetangga yang harus diiterasi dari current sehingga masih memenuhi syarat while
-            if  (len(getNeighbour(arrNeigh, currentNode)) > 0):
+            if  (len(getNeighbour(arrNeigh, currentNode)) > 0 and len(candidate) == 1):
                 candidate.append(('',9999999999,0,'')) 
             a = candidate.pop(0)
             visited.append((a[3],a[0],temp, a[2]))
@@ -170,13 +169,14 @@ def derivate(destNode,srcNode,visited):
     path = []
     nodeBacktrack = destNode
     destTuple = getMinFn(destNode, visited)
+    print(destTuple)
     found = False
     while (found == False):
         for i in range(len(visited)):
             if (nodeBacktrack == visited[i][1]): #and visited[i][1 not in path]):
                 path.append((destTuple[1],destTuple[3]))  #(b,g,...)
                 nodeBacktrack = destTuple[0]
-                destNode = visited[i][0]
+                destNode = destTuple[0]
                 if(destTuple[0] == srcNode):
                     if(srcNode not in path):
                         path.append((srcNode, 0))
