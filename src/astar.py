@@ -130,6 +130,7 @@ def closestPath(srcNode, destNode, arrNeigh, Distance, listNode):
                 if (node not in candidateNode):
                     pred = currentNode #menyimpan prenode
                     currentCheck = node
+<<<<<<< HEAD
                     predIdx = getIdx(listNode,pred) #indeks prenode
                     idx = getIdx(listNode, currentCheck) #indeks node yang sedang di cek
                     srcToN = predSrc + float(Distance[idx][predIdx]) #gn
@@ -137,6 +138,15 @@ def closestPath(srcNode, destNode, arrNeigh, Distance, listNode):
                     temp = srcToN + nToDest #fn
                     candidate.append((currentCheck, temp, srcToN, currentNode)) 
             candidate = sortingFn(candidate) #sorting list candidate berdasarkan fn
+=======
+                    predIdx = getIdx(listNode,pred)
+                    idx = getIdx(listNode, currentCheck)
+                    srcToN = predSrc + float(Distance[idx][predIdx])
+                    nToDest = float(Distance[idx][destIdx])
+                    temp = srcToN + nToDest
+                    candidate.append((currentCheck, temp, srcToN, currentNode))
+            candidate = sortingFn(candidate)
+>>>>>>> 90119aa580fffc472fd1178a2727ca0a9dacabf9
             #memastikan untuk tidak berenti iterasi ketika terdapat kasus dimana len(candidate) = 1 dan perlu dipop,
             #namun masih terdapat tetangga yang harus diiterasi dari current sehingga masih memenuhi syarat while
             if  (len(getNeighbour(arrNeigh, currentNode)) > 0 and len(candidate) == 1):
@@ -171,6 +181,7 @@ def getMinFn(destNode,visited):
 def derivate(destNode,srcNode,visited):
     path = []
     nodeBacktrack = destNode
+<<<<<<< HEAD
     destTuple = getMinFn(destNode, visited) #append terakhir
     found = False
     while (found == False):
@@ -178,11 +189,25 @@ def derivate(destNode,srcNode,visited):
             if (nodeBacktrack == visited[i][1]): 
                 path.append((destTuple[1],destTuple[3]))  
                 nodeBacktrack = destTuple[0] #backtrack mundur
+=======
+    destTuple = getMinFn(destNode, visited)
+    print(destTuple)
+    found = False
+    while (found == False):
+        for i in range(len(visited)):
+            if (nodeBacktrack == visited[i][1]): #and visited[i][1 not in path]):
+                path.append((destTuple[1],destTuple[3]))  #(b,g,...)
+                nodeBacktrack = destTuple[0]
+>>>>>>> 90119aa580fffc472fd1178a2727ca0a9dacabf9
                 destNode = destTuple[0]
                 if(destTuple[0] == srcNode):
                     if(srcNode not in path):
                         path.append((srcNode, 0))
                     found = True #berhenti loop
                 destTuple = getMinFn(destNode, visited)
+<<<<<<< HEAD
     path.reverse() #reverse list hasil append
+=======
+    path.reverse()
+>>>>>>> 90119aa580fffc472fd1178a2727ca0a9dacabf9
     return path

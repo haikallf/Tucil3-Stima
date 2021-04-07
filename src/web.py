@@ -18,7 +18,11 @@ def read_file():
     f = request.files["file"]
     f.save(os.path.join("uploads", secure_filename(f.filename)))
 
+<<<<<<< HEAD
     arr = bacaTextFile(os.path.join("uploads", secure_filename(f.filename)))
+=======
+    arr = bacaTextFile(secure_filename(f.filename))
+>>>>>>> 90119aa580fffc472fd1178a2727ca0a9dacabf9
 
     nodeArr = listOfNode(arr)
     neighArr = tetangga(arr, nodeArr)
