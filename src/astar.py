@@ -1,4 +1,3 @@
- 
 from math import radians, cos, sin, asin, sqrt
 # Membaca text dari file, mengembalikan multi dimentional array persis seperti file.txt
 def bacaTextFile(x):
@@ -20,7 +19,7 @@ def listOfNode(x):
     starting = int(x[0][0])
     node = []
     for i in range(1,starting+1):
-        node.append(x[i][0])
+        node.append(x[i][0]) #append list node dari array input
     return node
 
 # Membuat dan mengembalikan array berbentuk list of tupple, 
@@ -30,7 +29,8 @@ def tetangga(x,listnode):
     starting = int(x[0][0])
     for i in range(starting + 1, len(x)):
         for j in range(len(x[starting + 1])):
-            if(int(x[i][j]) > 0):
+            if(int(x[i][j]) > 0): 
+                #append edge node pada matrix yang bertetangga apabila bernilai 1
                 matrix.append((listnode[i-(starting+1)],listnode[j]))
     return matrix
 
@@ -41,7 +41,6 @@ def coordinates(x):
     starting = int(x[0][0])
     for i in range(1, starting+1):
         temp.append(x[i][1])
-    specChar = ['(', ')', ',']
     for loc in temp:
         loc = loc.replace('(',' ')
         loc = loc.replace(')',' ')
@@ -54,7 +53,7 @@ def coordinates(x):
     return loc
 
 # Membaca elemen dari list of list of location, mengembalikan jarak dengan metode haversine #
-def jarak(longitudeA, latitudeA, longitudeB, latitudeB):
+def jarak(latitudeA, longitudeA, latitudeB, longitudeB):
     longitudeA, latitudeA, longitudeB, latitudeB = map(radians, [longitudeA, latitudeA, longitudeB, latitudeB])
     dlon = longitudeB - longitudeA
     dlat = latitudeB - latitudeA
@@ -64,10 +63,10 @@ def jarak(longitudeA, latitudeA, longitudeB, latitudeB):
     dist = round(c*r, 3)
     return dist
 
-# Membaca array pada bagian matrix ketetanggan, kemudian membuat matrix bobot yang berisikan jarak 
-# yang dihitung dengan metode haversine formula antar simpul.
+# Membaca array pada bagian matrix ketetanggan, kemudian membuat matrix bobot yang berisikan 
+# jarak yang dihitung dengan metode haversine formula antar simpul.
 def matrixJarak(arr, loc):
-    matrix = []
+    matrix = [] 
     starting = int(arr[0][0])
     for i in range(starting+1, len(arr)):
         temp = []
@@ -76,12 +75,14 @@ def matrixJarak(arr, loc):
         matrix.append(temp)
     return matrix
 
-# Membaca matrix ketetanggan, mengembalikan tetangga dari suatu node #
+# Membaca matrix ketetanggan, mengembalikan tetangga dari suatu node 
 def getNeighbour(arrNeigh, node):
     matrix = []
     for elmt in arrNeigh:
         if elmt[0] == node:
-            matrix.append(elmt[1])
+            matrix.append(elmt[1]) 
+            #mengappend tetangga dari node yang ada di input
+            #berdasarkan array ketetanggaan
     return matrix
 
 # Menerima sebuah array dari listnode, kemudian mencari dan mengembalikan
@@ -97,10 +98,11 @@ def getIdx(array, node):
     if (found == True):
         return i
     else:
-        return -1
+        return -1 #mengembalikan -1 apabila node tidak ditemukan
 
-# Mengurutkan list tuple yang berisi node asal, node tujuan, berdasarkan jarak antara keduanya #
+# Mengurutkan list tuple yang berisi node asal, node tujuan, berdasarkan jarak antara keduanya
 def sortingFn(fnCandidate):
+    # algoritma selection short
     for i in range(len(fnCandidate)):
         min_idx = i
         for j in range(i+1, len(fnCandidate)):
@@ -114,9 +116,9 @@ def closestPath(srcNode, destNode, arrNeigh, Distance, listNode):
     candidate = []
     candidateNode = [srcNode]
     visited = []
-    destIdx = getIdx(listNode, destNode)
+    destIdx = getIdx(listNode, destNode) #index node yang dituju
     if (srcNode == destNode):
-        return [srcNode, destNode]
+        return [srcNode, 0]
     else :
         currentNode = srcNode
         predSrc = 0
@@ -126,22 +128,21 @@ def closestPath(srcNode, destNode, arrNeigh, Distance, listNode):
             currNeighbour = getNeighbour(arrNeigh, currentNode)
             for node in currNeighbour:
                 if (node not in candidateNode):
-                    pred = currentNode
+                    pred = currentNode #menyimpan prenode
                     currentCheck = node
-                    predIdx = getIdx(listNode,pred)
-                    idx = getIdx(listNode, currentCheck)
-                    srcToN = predSrc + float(Distance[idx][predIdx])
-                    nToDest = float(Distance[idx][destIdx])
-                    temp = srcToN + nToDest
-                    candidate.append((currentCheck, temp, srcToN, currentNode))
-                    candidateNode.append(currentCheck)
-            candidate = sortingFn(candidate)
+                    predIdx = getIdx(listNode,pred) #indeks prenode
+                    idx = getIdx(listNode, currentCheck) #indeks node yang sedang di cek
+                    srcToN = predSrc + float(Distance[idx][predIdx]) #gn
+                    nToDest = float(Distance[idx][destIdx]) #hn
+                    temp = srcToN + nToDest #fn
+                    candidate.append((currentCheck, temp, srcToN, currentNode)) 
+            candidate = sortingFn(candidate) #sorting list candidate berdasarkan fn
             #memastikan untuk tidak berenti iterasi ketika terdapat kasus dimana len(candidate) = 1 dan perlu dipop,
             #namun masih terdapat tetangga yang harus diiterasi dari current sehingga masih memenuhi syarat while
-            if  (len(getNeighbour(arrNeigh, currentNode)) > 0):
+            if  (len(getNeighbour(arrNeigh, currentNode)) > 0 and len(candidate) == 1):
                 candidate.append(('',9999999999,0,'')) 
-            a = candidate.pop(0)
-            visited.append((a[3],a[0],temp, a[2]))
+            a = candidate.pop(0) #pop elemen pertama hasil sorting
+            visited.append((a[3],a[0],a[1],a[2])) #append prenode,currnode,fn,gn
             candidateNode.append(a[0])
             currentNode = a[0]
             predSrc = float(a[2])
@@ -153,8 +154,8 @@ def closestPath(srcNode, destNode, arrNeigh, Distance, listNode):
             print("jalur tidak ditemukan")
             return []
 
-# Mencari node tujuan dari list tuple visited(yang sudah dikunjungi) berdasarkan jarak terpendek #
-# Mengembalikan 1 elemen dari visited #
+# Mencari node tujuan dari list tuple visited(yang sudah dikunjungi) berdasarkan 
+# jarak terpendek mengembalikan 1 elemen dari visited 
 def getMinFn(destNode,visited):
     min = 999999999
     result = visited[0]
@@ -163,24 +164,25 @@ def getMinFn(destNode,visited):
             min = float(visited[i][2])
             result = visited[i]
     return result
+
 # menerima input destination dan sourcenode, serta visited, kemudian menelusuri
 # path dari destination node ke source node, dan mengembalikan list of tupple
 # yang berisi node, dan jarak yang ditempuh dari src node 
 def derivate(destNode,srcNode,visited):
     path = []
     nodeBacktrack = destNode
-    destTuple = getMinFn(destNode, visited)
+    destTuple = getMinFn(destNode, visited) #append terakhir
     found = False
     while (found == False):
         for i in range(len(visited)):
-            if (nodeBacktrack == visited[i][1]): #and visited[i][1 not in path]):
-                path.append((destTuple[1],destTuple[3]))  #(b,g,...)
-                nodeBacktrack = destTuple[0]
-                destNode = visited[i][0]
+            if (nodeBacktrack == visited[i][1]): 
+                path.append((destTuple[1],destTuple[3]))  
+                nodeBacktrack = destTuple[0] #backtrack mundur
+                destNode = destTuple[0]
                 if(destTuple[0] == srcNode):
                     if(srcNode not in path):
                         path.append((srcNode, 0))
-                    found = True
+                    found = True #berhenti loop
                 destTuple = getMinFn(destNode, visited)
-    path.reverse()
+    path.reverse() #reverse list hasil append
     return path
